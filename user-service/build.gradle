@@ -40,6 +40,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // 유레카  설정 지움~~~~
 
     // 쿼리 파라미터 추가 외부 로그 남기기
     // 콘솔에서 SQL 자세히 보기

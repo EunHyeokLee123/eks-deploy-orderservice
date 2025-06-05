@@ -34,6 +34,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// 유레카  설정 지움~~~~
+
 
 	// build.gradle
 	implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'

@@ -41,6 +41,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
+	// 유레카  설정 지움~~~~
+
+
 	// 쿼리 파라미터 추가 외부 로그 남기기
 	// 콘솔에서 SQL 자세히 보기
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'

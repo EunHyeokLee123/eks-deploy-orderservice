@@ -16,7 +16,6 @@ import com.playdata.orderingservice.ordering.entity.OrderStatus;
 import com.playdata.orderingservice.ordering.entity.Ordering;
 import com.playdata.orderingservice.ordering.repository.OrderingRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.ws.rs.ServiceUnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -182,7 +181,7 @@ public class OrderingService {
             }
             // 서비스 에러로 인한 주문 보류
             // ordering 객체를 생성해서 ordering에 보류된 정보를 저장
-            catch (ServiceUnavailableException e) {
+            catch (IllegalStateException e) {
                 // product-service와의 통신에서는 2가저 경우의 예외가 발생
                 // 에러 메세지에 포함되어있는 단어의 유뮤에 따라 status를 다르게 세팅
                 ordering.updateStatus(
@@ -219,7 +218,7 @@ public class OrderingService {
 
         } catch (Exception e) {
             log.error("재고 차감 실패! 상품 ID: {}, 오류: {}", prodResDto.getId(), e.getMessage());
-            throw new ServiceUnavailableException("재고 차감 실패");
+            throw new IllegalStateException("재고 차감 실패");
         }
     }
 
@@ -237,7 +236,7 @@ public class OrderingService {
             return byId.getResult();
         } catch (Exception e) {
             log.error("상품 정보 조회 실패! 상품 ID: {}, 오류: {}", productId, e.getMessage());
-            throw new ServiceUnavailableException("상품 정보 조회 실패");
+            throw new IllegalStateException("상품 정보 조회 실패");
         }
     }
 
