@@ -1,0 +1,82 @@
+# 서비스 변경 감지용 주석
+
+
+server:
+  port: 8000
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          # 뒤에 무엇이 오든 모든 경로에 대한 CORS 설정을 하겠다
+          "[/**]":
+            allowed-origins:
+              - "http://localhost:5173"
+              - "https://playdatashoporder123456789.store"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowed-headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With #AJAX 요청임을 표시
+            allow-credentials: true
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: hello gateway
+            preLogger: false
+            postLogger: true
+      routes:
+
+        - id: user-service
+          # uri: lb://USER-SERVICE
+          # k8s 클러스터 내에서 다른 서비스를 지목하기 위한 DNS 명령 규칙
+          # <service-name>.<namespace>.svc.cluster.local:port 번호
+          uri: http://user-service.default.svc.cluster.local:8081
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: product-service
+          uri: http://product-service.default.svc.cluster.local:8082
+          predicates:
+            - Path=/product-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/product-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+        - id: ordering-service
+          uri: http://ordering-service.default.svc.cluster.local:8083
+          predicates:
+            - Path=/ordering-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/ordering-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+jwt:
+  expiration: 60
+  secretKey: rI9KLc/nWq+0ehvbQXjST52lIHi+A4PurdKwAe0ZcN+0LE1QBv7p0qhFx8wzt8PaigtMXpJHdIl6p4ILsLDasA==
+
+  secretKeyRt: rI9KLc/nWq+0ehvbQXjST52lIHi+A4PurdKwAe0ZcN+0LE1QBv7p0qhFx8wzt8PaigtMXpJHdIl6p4ILsLDasA==
+  expirationRt: 120

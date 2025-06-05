@@ -1,0 +1,9 @@
+# 서비스 변경 감지용 주석
+
+
+server:
+  port: 8082
+
+spring:
+  application:
+    name: product-service
