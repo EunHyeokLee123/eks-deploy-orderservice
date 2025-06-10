@@ -174,7 +174,7 @@ pipeline {
                                 cd /var/jenkins_home/workspace/k8s
                                 ls -a
                                 echo "Updating ${service} image tag in k8s repo..."
-                                sed -i "s#^image: .*image: ${ECR_URL}/${service}:${newTag}#" ./msa-chart/charts/${service}/values.yaml
+                                sed -i "s#^image: .*#image: ${ECR_URL}/${service}:${newTag}#" ./msa-chart/charts/${service}/values.yaml
                             """
 
                             // values.yaml 파일의 image 태그가 수정이 완료되면
