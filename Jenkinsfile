@@ -164,7 +164,7 @@ pipeline {
 
                                 def changedServices = env.CHANGED_SERVICES.split(",")
                                 changedServices.each { service ->
-                                def newTag = "1.0.1" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
+                                def newTag = "1.0.2" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
 
                                 // msa-chart/charts/<서비스명>/values.yaml 파일 내의 image 태그를 교체
                                 // sed: 스트림 편집기 (stream editor), 텍스트 파일을 수정하는데 사용함.
