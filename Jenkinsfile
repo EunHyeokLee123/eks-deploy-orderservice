@@ -191,7 +191,7 @@ pipeline {
 
                                 echo "push complete"
                                 cd ..
-                                rm -rf k8s
+                                rm -rf /var/jenkins_home/workspace/k8s
                                 ls -a
                             """
                             // 다음 클론 (다음 빌드) 시 에러를 방지하기 위해서 클론받은 폴더를 삭제함
