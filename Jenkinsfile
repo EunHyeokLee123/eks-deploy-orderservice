@@ -151,7 +151,7 @@ pipeline {
                 steps {
 
                     script {
-                        withCredentials([usernamePassword(credentialsId: "${K8S_REPO_CRED}", usernameVariable: "GIT_USERNAME", passwordVariable: "GIT_PASSWORD")]) {
+                        withCredentials([usernamePassword(credentialsId: "K8S_REPO_CRED", usernameVariable: "GIT_USERNAME", passwordVariable: "GIT_PASSWORD")]) {
 
                              // 1. k8s 레포지토리 클론하자
                              // 현재 stage가 활동하는 경로는 /var/jenkins_home/workspace/pipeline 폴더임
