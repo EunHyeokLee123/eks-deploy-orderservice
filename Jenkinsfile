@@ -164,7 +164,7 @@ pipeline {
 
                                 def changedServices = env.CHANGED_SERVICES.split(",")
                                 changedServices.each { service ->
-                                def newTag = "1.0.2" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
+                                def newTag = "1.0.3" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
 
                                 // msa-chart/charts/<서비스명>/values.yaml 파일 내의 image 태그를 교체
                                 // sed: 스트림 편집기 (stream editor), 텍스트 파일을 수정하는데 사용함.
@@ -182,22 +182,22 @@ pipeline {
                                    // values.yaml 파일의 image 태그가 수정이 완료되면
                                    // ArgoCD가 담당하는 Git 저장소로 변경사항을 commit & push
 
-                                   sh """
-                                      cd /var/jenkins_home/workspace/k8s
-                                      git config user.name "EunHyeokLee123"
-                                      git config user.email "secun77@naver.com"
-                                      git remote -v
-                                      git add .
-                                      git commit -m "Update images for changed services ${env.BUILD_ID}"
-                                      git push origin main
-
-                                      echo "push complete"
-                                      cd ..
-                                      rm -rf /var/jenkins_home/workspace/k8s
-                                      ls -a
-                                      """
                                       // 다음 클론 (다음 빌드) 시 에러를 방지하기 위해서 클론받은 폴더를 삭제함
                              }
+                                sh """
+                                cd /var/jenkins_home/workspace/k8s
+                                git config user.name "EunHyeokLee123"
+                                git config user.email "secun77@naver.com"
+                                git remote -v
+                                git add .
+                                git commit -m "Update images for changed services ${env.BUILD_ID}"
+                                git push origin main
+
+                                echo "push complete"
+                                cd ..
+                                rm -rf /var/jenkins_home/workspace/k8s
+                                ls -a
+                                """
 
                         }
 
