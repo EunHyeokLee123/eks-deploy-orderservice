@@ -151,50 +151,54 @@ pipeline {
                 steps {
 
                     script {
-                        // 1. k8s 레포지토리 클론하자
-                        // 현재 stage가 활동하는 경로는 /var/jenkins_home/workspace/pipeline 폴더임
-                        // workspace에 clone 받기 위해서 cd .. 으로 디렉토리 이동함.
-                        sh """
-                            cd ..
-                            ls -a
-                            git clone https://github.com/EunHyeokLee123/k8s.git
-                        """
+                        withCredentials([usernamePassword(credentialsId: "${K8S_REPO_CRED}", usernameVariable: "GIT_USERNAME", passwordVariable: "GIT_PASSWORD")]) {
 
-                        def changedServices = env.CHANGED_SERVICES.split(",")
-                        changedServices.each { service ->
-                            def newTag = "1.0.1" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
-
-                            // msa-chart/charts/<서비스명>/values.yaml 파일 내의 image 태그를 교체
-                            // sed: 스트림 편집기 (stream editor), 텍스트 파일을 수정하는데 사용함.
-                            // s#^ -> 특정 라인의 시작을 의미하는 정규표헌식
-                            // image: '텍스트 image:' 이라는 텍스트를 찾아라
-                            // .*image: image 다음에 오는 모든 문자
-                            // 종합: 'image: ' <- 이렇게 시작하는 텍스트를 찾아서 image: 다음에 오는 문자를 내가 지정한 텍스트로 수정
-                            sh """
-                                cd /var/jenkins_home/workspace/k8s
-                                ls -a
-                                echo "Updating ${service} image tag in k8s repo..."
-                                sed -i "s#^image: .*#image: ${ECR_URL}/${service}:${newTag}#" ./msa-chart/charts/${service}/values.yaml
-                            """
-
-                            // values.yaml 파일의 image 태그가 수정이 완료되면
-                            // ArgoCD가 담당하는 Git 저장소로 변경사항을 commit & push
-
-                            sh """
-                                cd /var/jenkins_home/workspace/k8s
-                                git config user.name "EunHyeokLee123"
-                                git config user.email "secun77@naver.com"
-                                git remote -v
-                                git add .
-                                git commit -m "Update images for changed services ${env.BUILD_ID}"
-                                git push origin main
-
-                                echo "push complete"
+                             // 1. k8s 레포지토리 클론하자
+                             // 현재 stage가 활동하는 경로는 /var/jenkins_home/workspace/pipeline 폴더임
+                             // workspace에 clone 받기 위해서 cd .. 으로 디렉토리 이동함.
+                             sh """
                                 cd ..
-                                rm -rf /var/jenkins_home/workspace/k8s
                                 ls -a
-                            """
-                            // 다음 클론 (다음 빌드) 시 에러를 방지하기 위해서 클론받은 폴더를 삭제함
+                                git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/EunHyeokLee123/k8s.git
+                                """
+
+                                def changedServices = env.CHANGED_SERVICES.split(",")
+                                changedServices.each { service ->
+                                def newTag = "1.0.1" // 이미지 빌드할 당시에 사용한 태그를 동일하게 사용하자
+
+                                // msa-chart/charts/<서비스명>/values.yaml 파일 내의 image 태그를 교체
+                                // sed: 스트림 편집기 (stream editor), 텍스트 파일을 수정하는데 사용함.
+                                // s#^ -> 특정 라인의 시작을 의미하는 정규표헌식
+                                // image: '텍스트 image:' 이라는 텍스트를 찾아라
+                                // .*image: image 다음에 오는 모든 문자
+                                // 종합: 'image: ' <- 이렇게 시작하는 텍스트를 찾아서 image: 다음에 오는 문자를 내가 지정한 텍스트로 수정
+                                sh """
+                                   cd /var/jenkins_home/workspace/k8s
+                                   ls -a
+                                   echo "Updating ${service} image tag in k8s repo..."
+                                   sed -i "s#^image: .*#image: ${ECR_URL}/${service}:${newTag}#" ./msa-chart/charts/${service}/values.yaml
+                                   """
+
+                                   // values.yaml 파일의 image 태그가 수정이 완료되면
+                                   // ArgoCD가 담당하는 Git 저장소로 변경사항을 commit & push
+
+                                   sh """
+                                      cd /var/jenkins_home/workspace/k8s
+                                      git config user.name "EunHyeokLee123"
+                                      git config user.email "secun77@naver.com"
+                                      git remote -v
+                                      git add .
+                                      git commit -m "Update images for changed services ${env.BUILD_ID}"
+                                      git push origin main
+
+                                      echo "push complete"
+                                      cd ..
+                                      rm -rf /var/jenkins_home/workspace/k8s
+                                      ls -a
+                                      """
+                                      // 다음 클론 (다음 빌드) 시 에러를 방지하기 위해서 클론받은 폴더를 삭제함
+                             }
+
                         }
 
                     }
