@@ -93,7 +93,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory {
     // Flux: 여러 데이터 블록, 스트림을 처리
     // request, response를 바로 사용하지 않고 Mono, Flux를 사용하는 이유는 게이트웨이 서버가
     // 우리가 기존에 사용하던 톰캣 서버가 아닌 비동기 I/O 모델 (Netty)를 사용하기 때문.
-    // 주석을 붙입니다. 더 붙입니다. ㅁㄴㅇㅁㄴㅇㅁㄴㅇ
+    // 주석을 붙입니다. 더 붙입니다. ㅁㄴㅇㅁㄴㅇㅁㄴㅇ2344423423
     private Mono<Void> onError(ServerWebExchange exchange,
                                String msg, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
